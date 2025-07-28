@@ -35,8 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { Delete, Clock, Location } from "@element-plus/icons-vue";
+import { Delete, Location, Clock } from '@element-plus/icons-vue';
 
 // 定义任务类型
 interface Task {

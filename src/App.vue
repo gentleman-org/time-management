@@ -1,11 +1,14 @@
 <template>
-  <div id="app">
-    <FourQuadrants />
-  </div>
+  <el-config-provider :locale="zhCn">
+    <div id="app">
+      <FourQuadrants />
+    </div>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import FourQuadrants from './components/FourQuadrants.vue'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 </script>
 
 <style>

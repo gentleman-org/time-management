@@ -35,9 +35,11 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts",
+    "src/**/*.d.ts", 
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "auto-imports.d.ts",
+    "components.d.ts"
   ],
   "exclude": [
     "node_modules",

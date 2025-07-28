@@ -224,7 +224,7 @@
               />
             </div>
           </div>
-          <div class="form-help-text">坐标范围-5到5，原点在中心。第一象限(+,+)，第二象限(-,+)，第三象限(-,-)，第四象限(+,-)</div>
+          <div class="form-help-text">坐标范围-4到4，原点在中心。第一象限(+,+)，第二象限(-,+)，第三象限(-,-)，第四象限(+,-)</div>
         </el-form-item>
       </el-form>
 
@@ -237,8 +237,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import { ElMessage, ElNotification } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import TaskItem from './TaskItem.vue'
 
