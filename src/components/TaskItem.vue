@@ -1,29 +1,37 @@
 <template>
   <div class="task-item" :class="priorityClass">
-    <div class="task-header">
-      <span class="task-name">{{ task.name }}</span>
-      <el-button 
-        type="danger" 
-        size="small" 
-        :icon="Delete" 
-        circle
-        @click="$emit('delete', task.id)"
-        class="delete-btn"
-      />
-    </div>
-    
-    <div class="task-details" v-if="task.priority">
-      <div class="task-priority">
+    <div>
+      <div class="task-header">
+        <span class="task-name">{{ task.name }}</span>
+        <el-button
+          type="danger"
+          size="small"
+          :icon="Delete"
+          circle
+          @click.stop="$emit('delete', task.id)"
+          class="delete-btn"
+        />
+      </div>
+
+      <div class="task-details">
+        <!-- <div class="task-priority">
         <el-icon><Flag /></el-icon>
-        <span>{{ getPriorityText(task.priority) }}</span>
+        <span>优先级: {{ task.priority }}/5</span>
+      </div> -->
+        <div class="task-coordinate">
+          <el-icon><Location /></el-icon>
+          <span>坐标: ({{ task.x }}, {{ task.y }})</span>
+        </div>
       </div>
     </div>
-    
+
     <div class="task-create-time">
       <div class="task-deadline" v-if="task.deadline">
         <el-icon><Clock /></el-icon>
         <span>{{ formatDeadline(task.deadline) }}</span>
-        <span class="deadline-status" :class="deadlineStatus">{{ getDeadlineStatusText() }}</span>
+        <span class="deadline-status" :class="deadlineStatus">{{
+          getDeadlineStatusText()
+        }}</span>
       </div>
       <p>创建于: {{ task.createTime }}</p>
     </div>
@@ -31,88 +39,89 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Delete, Clock, Flag } from '@element-plus/icons-vue'
+import { computed } from "vue";
+import { Delete, Clock, Flag, Location } from "@element-plus/icons-vue";
 
 // 定义任务类型
 interface Task {
-  id: number
-  name: string
-  deadline?: string
-  priority: 'low' | 'medium' | 'high'
-  createTime: string
+  id: number;
+  name: string;
+  deadline?: string;
+  priority: number;
+  x: number;
+  y: number;
+  createTime: string;
 }
 
 const props = defineProps<{
-  task: Task
-}>()
+  task: Task;
+}>();
 
 const emit = defineEmits<{
-  delete: [taskId: number]
-}>()
+  delete: [taskId: number];
+}>();
 
 // 优先级样式类
 const priorityClass = computed(() => {
-  return `priority-${props.task.priority || 'medium'}`
-})
+  const priority = props.task.priority;
+  if (priority >= 4) return "priority-high";
+  if (priority >= 3) return "priority-medium";
+  return "priority-low";
+});
 
 // 截止时间状态
 const deadlineStatus = computed(() => {
-  if (!props.task.deadline) return ''
-  
-  const now = new Date()
-  const deadline = new Date(props.task.deadline)
-  const timeDiff = deadline.getTime() - now.getTime()
-  const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60))
-  
-  if (timeDiff < 0) return 'overdue'
-  if (hoursDiff <= 1) return 'urgent'
-  if (hoursDiff <= 24) return 'warning'
-  return 'normal'
-})
+  if (!props.task.deadline) return "";
+
+  const now = new Date();
+  const deadline = new Date(props.task.deadline);
+  const timeDiff = deadline.getTime() - now.getTime();
+  const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+
+  if (timeDiff < 0) return "overdue";
+  if (hoursDiff <= 1) return "urgent";
+  if (hoursDiff <= 24) return "warning";
+  return "normal";
+});
 
 // 格式化截止时间
 const formatDeadline = (deadline: string) => {
-  const date = new Date(deadline)
-  const now = new Date()
-  const timeDiff = date.getTime() - now.getTime()
-  
+  const date = new Date(deadline);
+  const now = new Date();
+  const timeDiff = date.getTime() - now.getTime();
+
   if (timeDiff < 0) {
-    return `${deadline} (已过期)`
+    return `${deadline} (已过期)`;
   }
-  
-  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  
+
+  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+
   if (days > 0) {
-    return `${deadline} (${days}天${hours}小时后)`
+    return `${deadline} (${days}天${hours}小时后)`;
   } else if (hours > 0) {
-    return `${deadline} (${hours}小时后)`
+    return `${deadline} (${hours}小时后)`;
   } else {
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))
-    return `${deadline} (${minutes}分钟后)`
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${deadline} (${minutes}分钟后)`;
   }
-}
+};
 
 // 获取截止时间状态文本
 const getDeadlineStatusText = () => {
   switch (deadlineStatus.value) {
-    case 'overdue': return '已过期'
-    case 'urgent': return '紧急'
-    case 'warning': return '即将到期'
-    default: return ''
+    case "overdue":
+      return "已过期";
+    case "urgent":
+      return "紧急";
+    case "warning":
+      return "即将到期";
+    default:
+      return "";
   }
-}
-
-// 获取优先级文本
-const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
-  const priorityMap: Record<string, string> = {
-    low: '低优先级',
-    medium: '中优先级', 
-    high: '高优先级'
-  }
-  return priorityMap[priority] || '中优先级'
-}
+};
 </script>
 
 <style scoped>
@@ -124,6 +133,10 @@ const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
   border-left: 4px solid #ddd;
   cursor: move;
   transition: all 0.3s ease;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .task-item + .task-item {
@@ -151,7 +164,8 @@ const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
+  font-size: 12px;
 }
 
 .task-name {
@@ -178,16 +192,19 @@ const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
 }
 
 .task-deadline,
-.task-priority {
+.task-priority,
+.task-coordinate {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
+  margin-bottom: 4px;
 }
 
 .task-deadline .el-icon,
-.task-priority .el-icon {
+.task-priority .el-icon,
+.task-coordinate .el-icon {
   font-size: 14px;
 }
 
@@ -209,9 +226,6 @@ const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
 }
 
 .task-create-time {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   font-size: 10px;
   color: #a0aec0;
   border-top: 1px solid #edf2f7;
@@ -226,4 +240,4 @@ const getPriorityText = (priority: 'low' | 'medium' | 'high') => {
 .sortable-chosen {
   transform: rotate(5deg);
 }
-</style> 
+</style>
