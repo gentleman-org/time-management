@@ -1,5 +1,5 @@
 <template>
-  <div class="task-item" :class="priorityClass">
+  <div class="task-item priority-high">
     <div>
       <div class="task-header">
         <span class="task-name">{{ task.name }}</span>
@@ -43,7 +43,6 @@ interface Task {
   id: number;
   name: string;
   deadline?: string;
-  priority: number;
   x: number;
   y: number;
   createTime: string;
@@ -56,14 +55,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   delete: [taskId: number];
 }>();
-
-// 优先级样式类
-const priorityClass = computed(() => {
-  const priority = props.task.priority;
-  if (priority >= 4) return "priority-high";
-  if (priority >= 3) return "priority-medium";
-  return "priority-low";
-});
 
 // 截止时间状态
 const deadlineStatus = computed(() => {

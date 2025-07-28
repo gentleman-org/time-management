@@ -154,10 +154,10 @@
         
         <!-- 坐标轴标签 -->
         <div class="axis-labels">
-          <!-- <div class="axis-label top">Y轴正方向 ↑</div>
-          <div class="axis-label bottom">Y轴负方向 ↓</div>
-          <div class="axis-label left">← X轴负方向</div>
-          <div class="axis-label right">X轴正方向 →</div> -->
+          <div class="axis-label top">↑重要</div>
+          <div class="axis-label right">紧急 →</div>
+          <!-- <div class="axis-label bottom">Y轴负方向 ↓</div>
+          <div class="axis-label left">← X轴负方向</div> -->
           <div class="axis-label center">(0,0)</div>
         </div>
       </div>
@@ -190,7 +190,7 @@
           />
         </el-form-item>
 
-        <el-form-item label="优先级">
+        <!-- <el-form-item label="优先级">
           <el-input-number 
             v-model="newTask.priority" 
             :min="1" 
@@ -199,7 +199,7 @@
             style="width: 100%;"
           />
           <div class="form-help-text">数字1-4，数值越大优先级越高</div>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="坐标位置">
           <div class="coordinate-inputs">
@@ -247,7 +247,6 @@ interface Task {
   id: number
   name: string
   deadline?: string
-  priority: number // 改为数字类型，1-10，数字越大优先级越高
   x: number // x坐标
   y: number // y坐标
   createTime: string
@@ -261,7 +260,6 @@ interface NewTaskForm {
   name: string
   quadrant: string
   deadline: string
-  priority: number
   x: number
   y: number
 }
@@ -278,7 +276,6 @@ const newTask = reactive<NewTaskForm>({
   name: '',
   quadrant: '',
   deadline: '',
-  priority: 3,
   x: 1,
   y: 1
 })
@@ -322,7 +319,6 @@ const addTask = () => {
     id: Date.now(),
     name: newTask.name,
     deadline: newTask.deadline,
-    priority: newTask.priority,
     x: newTask.x,
     y: newTask.y,
     createTime: new Date().toLocaleString()
@@ -336,7 +332,6 @@ const addTask = () => {
     name: '',
     quadrant: '',
     deadline: '',
-    priority: 3,
     x: 1,
     y: 1
   })
@@ -760,6 +755,7 @@ onUnmounted(() => {
   top: 4px;
   left: 50%;
   transform: translateX(-50%);
+  width: 23px;
 }
 
 .axis-label.bottom {
