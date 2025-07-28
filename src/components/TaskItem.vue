@@ -14,10 +14,6 @@
       </div>
 
       <div class="task-details">
-        <!-- <div class="task-priority">
-        <el-icon><Flag /></el-icon>
-        <span>优先级: {{ task.priority }}/5</span>
-      </div> -->
         <div class="task-coordinate">
           <el-icon><Location /></el-icon>
           <span>坐标: ({{ task.x }}, {{ task.y }})</span>
@@ -40,7 +36,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { Delete, Clock, Flag, Location } from "@element-plus/icons-vue";
+import { Delete, Clock, Location } from "@element-plus/icons-vue";
 
 // 定义任务类型
 interface Task {
