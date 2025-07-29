@@ -8,7 +8,7 @@
           size="small"
           :icon="Delete"
           circle
-          @click.stop="$emit('delete', task.id)"
+          @click.stop="emit('delete', task.id)"
           class="delete-btn"
         />
       </div>
@@ -35,17 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import { Task } from '@/types';
 import { Delete, Location, Clock } from '@element-plus/icons-vue';
-
-// 定义任务类型
-interface Task {
-  id: number;
-  name: string;
-  deadline?: string;
-  x: number;
-  y: number;
-  createTime: string;
-}
 
 const props = defineProps<{
   task: Task;

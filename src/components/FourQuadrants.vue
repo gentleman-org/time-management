@@ -2,10 +2,18 @@
   <div class="four-quadrants-container">
     <!-- 标题栏 -->
     <div class="header">
-      <h1>时间管理 - 四象限法则</h1>
-      <el-button type="primary" @click="showAddDialog = true" :icon="Plus">
-        添加任务
-      </el-button>
+      <h1>Time management</h1>
+      <p>
+        <!-- <el-button
+          @click="showGridConfigDialog = true"
+          :icon="Grid"
+        >
+          配置网格
+        </el-button> -->
+        <el-button type="primary" @click="showAddDialog = true">
+          添加任务
+        </el-button>
+      </p>
     </div>
 
     <!-- 四象限主体 -->
@@ -16,28 +24,58 @@
         <div class="quadrant quadrant-2">
           <div class="quadrant-title">第二象限 &emsp; 重要 · 不紧急</div>
           <div class="grid-container">
-            <div 
-              v-for="row in 4" 
+            <div
+              v-for="row in GRID_SIZE"
               :key="`q2-row-${row}`"
               class="grid-row"
             >
-              <div 
-                v-for="col in 4" 
+              <div
+                v-for="col in GRID_SIZE"
                 :key="`q2-cell-${row}-${col}`"
                 class="grid-cell"
-                :class="{ 'has-task': getTaskAtPosition(quadrant2Items, -(5-col), 5-row) }"
-                @drop="onDropToGrid($event, 2, -(5-col), 5-row)"
+                :class="{
+                  'has-task': getTaskAtPosition(
+                    quadrant2Items,
+                    -(GRID_SIZE + 1 - col),
+                    GRID_SIZE + 1 - row
+                  ),
+                }"
+                @drop="
+                  onDropToGrid(
+                    $event,
+                    2,
+                    -(GRID_SIZE + 1 - col),
+                    GRID_SIZE + 1 - row
+                  )
+                "
                 @dragover="onDragOver"
                 @dragenter="onDragEnter"
-                @click="onCellClick(2, -(5-col), 5-row)"
-                :data-x="-(5-col)"
-                :data-y="5-row"
+                @click="
+                  onCellClick(2, -(GRID_SIZE + 1 - col), GRID_SIZE + 1 - row)
+                "
+                :data-x="-(GRID_SIZE + 1 - col)"
+                :data-y="GRID_SIZE + 1 - row"
               >
-                <TaskItem 
-                  v-if="getTaskAtPosition(quadrant2Items, -(5-col), 5-row)"
-                  :task="getTaskAtPosition(quadrant2Items, -(5-col), 5-row)!"
+                <TaskItem
+                  v-if="
+                    getTaskAtPosition(
+                      quadrant2Items,
+                      -(GRID_SIZE + 1 - col),
+                      GRID_SIZE + 1 - row
+                    )
+                  "
+                  :task="getTaskAtPosition(quadrant2Items, -((GRID_SIZE + 1)-col), (GRID_SIZE + 1)-row)!"
                   @delete="deleteTask"
-                  @dragstart="onDragStart($event, getTaskAtPosition(quadrant2Items, -(5-col), 5-row)!)"
+                  @dragstart="
+                    onDragStart(
+                      $event,
+                      getTaskAtPosition(
+                        quadrant2Items,
+                        -(GRID_SIZE + 1 - col),
+                        GRID_SIZE + 1 - row
+                      )!
+                    )
+                  "
                   draggable="true"
                   class="grid-task"
                 />
@@ -50,28 +88,45 @@
         <div class="quadrant quadrant-1">
           <div class="quadrant-title">第一象限 &emsp; 重要 · 紧急</div>
           <div class="grid-container">
-            <div 
-              v-for="row in 4" 
+            <div
+              v-for="row in GRID_SIZE"
               :key="`q1-row-${row}`"
               class="grid-row"
             >
-              <div 
-                v-for="col in 4" 
+              <div
+                v-for="col in GRID_SIZE"
                 :key="`q1-cell-${row}-${col}`"
                 class="grid-cell"
-                :class="{ 'has-task': getTaskAtPosition(quadrant1Items, col, 5-row) }"
-                @drop="onDropToGrid($event, 1, col, 5-row)"
+                :class="{
+                  'has-task': getTaskAtPosition(
+                    quadrant1Items,
+                    col,
+                    GRID_SIZE + 1 - row
+                  ),
+                }"
+                @drop="onDropToGrid($event, 1, col, GRID_SIZE + 1 - row)"
                 @dragover="onDragOver"
                 @dragenter="onDragEnter"
-                @click="onCellClick(1, col, 5-row)"
+                @click="onCellClick(1, col, GRID_SIZE + 1 - row)"
                 :data-x="col"
-                :data-y="5-row"
+                :data-y="GRID_SIZE + 1 - row"
               >
-                <TaskItem 
-                  v-if="getTaskAtPosition(quadrant1Items, col, 5-row)"
-                  :task="getTaskAtPosition(quadrant1Items, col, 5-row)!"
+                <TaskItem
+                  v-if="
+                    getTaskAtPosition(quadrant1Items, col, GRID_SIZE + 1 - row)
+                  "
+                  :task="getTaskAtPosition(quadrant1Items, col, (GRID_SIZE + 1)-row)!"
                   @delete="deleteTask"
-                  @dragstart="onDragStart($event, getTaskAtPosition(quadrant1Items, col, 5-row)!)"
+                  @dragstart="
+                    onDragStart(
+                      $event,
+                      getTaskAtPosition(
+                        quadrant1Items,
+                        col,
+                        GRID_SIZE + 1 - row
+                      )!
+                    )
+                  "
                   draggable="true"
                   class="grid-task"
                 />
@@ -84,28 +139,49 @@
         <div class="quadrant quadrant-3">
           <div class="quadrant-title">第三象限 &emsp; 不重要 · 不紧急</div>
           <div class="grid-container">
-            <div 
-              v-for="row in 4" 
+            <div
+              v-for="row in GRID_SIZE"
               :key="`q3-row-${row}`"
               class="grid-row"
             >
-              <div 
-                v-for="col in 4" 
+              <div
+                v-for="col in GRID_SIZE"
                 :key="`q3-cell-${row}-${col}`"
                 class="grid-cell"
-                :class="{ 'has-task': getTaskAtPosition(quadrant3Items, -(5-col), -row) }"
-                @drop="onDropToGrid($event, 3, -(5-col), -row)"
+                :class="{
+                  'has-task': getTaskAtPosition(
+                    quadrant3Items,
+                    -(GRID_SIZE + 1 - col),
+                    -row
+                  ),
+                }"
+                @drop="onDropToGrid($event, 3, -(GRID_SIZE + 1 - col), -row)"
                 @dragover="onDragOver"
                 @dragenter="onDragEnter"
-                @click="onCellClick(3, -(5-col), -row)"
-                :data-x="-(5-col)"
+                @click="onCellClick(3, -(GRID_SIZE + 1 - col), -row)"
+                :data-x="-(GRID_SIZE + 1 - col)"
                 :data-y="-row"
               >
-                <TaskItem 
-                  v-if="getTaskAtPosition(quadrant3Items, -(5-col), -row)"
-                  :task="getTaskAtPosition(quadrant3Items, -(5-col), -row)!"
+                <TaskItem
+                  v-if="
+                    getTaskAtPosition(
+                      quadrant3Items,
+                      -(GRID_SIZE + 1 - col),
+                      -row
+                    )
+                  "
+                  :task="getTaskAtPosition(quadrant3Items, -((GRID_SIZE + 1)-col), -row)!"
                   @delete="deleteTask"
-                  @dragstart="onDragStart($event, getTaskAtPosition(quadrant3Items, -(5-col), -row)!)"
+                  @dragstart="
+                    onDragStart(
+                      $event,
+                      getTaskAtPosition(
+                        quadrant3Items,
+                        -(GRID_SIZE + 1 - col),
+                        -row
+                      )!
+                    )
+                  "
                   draggable="true"
                   class="grid-task"
                 />
@@ -118,16 +194,18 @@
         <div class="quadrant quadrant-4">
           <div class="quadrant-title">第四象限 &emsp; 不重要 · 紧急</div>
           <div class="grid-container">
-            <div 
-              v-for="row in 4" 
+            <div
+              v-for="row in GRID_SIZE"
               :key="`q4-row-${row}`"
               class="grid-row"
             >
-              <div 
-                v-for="col in 4" 
+              <div
+                v-for="col in GRID_SIZE"
                 :key="`q4-cell-${row}-${col}`"
                 class="grid-cell"
-                :class="{ 'has-task': getTaskAtPosition(quadrant4Items, col, -row) }"
+                :class="{
+                  'has-task': getTaskAtPosition(quadrant4Items, col, -row),
+                }"
                 @drop="onDropToGrid($event, 4, col, -row)"
                 @dragover="onDragOver"
                 @dragenter="onDragEnter"
@@ -135,11 +213,16 @@
                 :data-x="col"
                 :data-y="-row"
               >
-                <TaskItem 
+                <TaskItem
                   v-if="getTaskAtPosition(quadrant4Items, col, -row)"
                   :task="getTaskAtPosition(quadrant4Items, col, -row)!"
                   @delete="deleteTask"
-                  @dragstart="onDragStart($event, getTaskAtPosition(quadrant4Items, col, -row)!)"
+                  @dragstart="
+                    onDragStart(
+                      $event,
+                      getTaskAtPosition(quadrant4Items, col, -row)!
+                    )
+                  "
                   draggable="true"
                   class="grid-task"
                 />
@@ -151,7 +234,7 @@
         <!-- 坐标轴 -->
         <!-- <div class="axis-horizontal"></div>
         <div class="axis-vertical"></div> -->
-        
+
         <!-- 坐标轴标签 -->
         <div class="axis-labels">
           <div class="axis-label top">↑重要</div>
@@ -169,7 +252,7 @@
         <el-form-item label="任务名称" required>
           <el-input v-model="newTask.name" placeholder="请输入任务名称" />
         </el-form-item>
-        
+
         <el-form-item label="所在象限" required>
           <el-select v-model="newTask.quadrant" placeholder="请选择象限">
             <el-option label="第一象限（重要·紧急）" value="1" />
@@ -186,45 +269,37 @@
             placeholder="选择截止时间"
             format="YYYY-MM-DD HH:mm"
             value-format="YYYY-MM-DD HH:mm"
-            style="width: 100%;"
+            style="width: 100%"
           />
         </el-form-item>
-
-        <!-- <el-form-item label="优先级">
-          <el-input-number 
-            v-model="newTask.priority" 
-            :min="1" 
-            :max="4" 
-            :step="1"
-            style="width: 100%;"
-          />
-          <div class="form-help-text">数字1-4，数值越大优先级越高</div>
-        </el-form-item> -->
-
         <el-form-item label="坐标位置">
           <div class="coordinate-inputs">
             <div class="coordinate-input">
               <label>X坐标:</label>
-              <el-input-number 
-                v-model="newTask.x" 
-                :min="-4" 
-                :max="4" 
+              <el-input-number
+                v-model="newTask.x"
+                :min="-GRID_SIZE"
+                :max="GRID_SIZE"
                 :step="1"
-                style="width: 120px;"
+                style="width: 120px"
               />
             </div>
             <div class="coordinate-input">
               <label>Y坐标:</label>
-              <el-input-number 
-                v-model="newTask.y" 
-                :min="-4" 
-                :max="4" 
+              <el-input-number
+                v-model="newTask.y"
+                :min="-GRID_SIZE"
+                :max="GRID_SIZE"
                 :step="1"
-                style="width: 120px;"
+                style="width: 120px"
               />
             </div>
           </div>
-          <div class="form-help-text">坐标范围-4到4，原点在中心。第一象限(+,+)，第二象限(-,+)，第三象限(-,-)，第四象限(+,-)</div>
+          <div class="form-help-text">
+            坐标范围-{{ GRID_SIZE }}到{{
+              GRID_SIZE
+            }}，原点在中心。第一象限(+,+)，第二象限(-,+)，第三象限(-,-)，第四象限(+,-)
+          </div>
         </el-form-item>
       </el-form>
 
@@ -237,80 +312,70 @@
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
-import TaskItem from './TaskItem.vue'
-
-// 定义任务类型
-interface Task {
-  id: number
-  name: string
-  deadline?: string
-  x: number // x坐标
-  y: number // y坐标
-  createTime: string
-  notified1h?: boolean
-  notified30m?: boolean
-  notifiedExpired?: boolean
-}
-
-// 定义新任务表单类型
-interface NewTaskForm {
-  name: string
-  quadrant: string
-  deadline: string
-  x: number
-  y: number
-}
+import TaskItem from "./TaskItem.vue";
+import { GRID_SIZE } from "@/config";
+import { NewTaskForm, Task } from "@/types";
 
 // 响应式数据
-const showAddDialog = ref<boolean>(false)
-const quadrant1Items = ref<Task[]>([])
-const quadrant2Items = ref<Task[]>([])
-const quadrant3Items = ref<Task[]>([])
-const quadrant4Items = ref<Task[]>([])
+const showAddDialog = ref<boolean>(false);
+const quadrant1Items = ref<Task[]>([]);
+const quadrant2Items = ref<Task[]>([]);
+const quadrant3Items = ref<Task[]>([]);
+const quadrant4Items = ref<Task[]>([]);
 
 // 新任务表单
 const newTask = reactive<NewTaskForm>({
-  name: '',
-  quadrant: '',
-  deadline: '',
+  name: "",
+  quadrant: "",
+  deadline: "",
   x: 1,
-  y: 1
-})
+  y: 1,
+});
 
 // 当前拖拽的任务
-let draggedTask: Task | null = null
+let draggedTask: Task | null = null;
 
 // 通知定时器
-let notificationTimer: number | null = null
+let notificationTimer: number | null = null;
 
 // 添加任务
 const addTask = () => {
   if (!newTask.name || !newTask.quadrant) {
-    ElMessage.error('请填写任务名称和选择象限')
-    return
+    ElMessage.error("请填写任务名称和选择象限");
+    return;
   }
 
   // 验证坐标范围
-  if (newTask.x < -4 || newTask.x > 4 || newTask.y < -4 || newTask.y > 4) {
-    ElMessage.error('坐标必须在-4到4范围内')
-    return
+  if (
+    newTask.x < -GRID_SIZE ||
+    newTask.x > GRID_SIZE ||
+    newTask.y < -GRID_SIZE ||
+    newTask.y > GRID_SIZE
+  ) {
+    ElMessage.error(`坐标必须在-${GRID_SIZE}到${GRID_SIZE}范围内`);
+    return;
   }
 
   // 验证坐标与象限的匹配
-  const expectedQuadrant = getQuadrantFromCoordinates(newTask.x, newTask.y)
+  const expectedQuadrant = getQuadrantFromCoordinates(newTask.x, newTask.y);
   if (expectedQuadrant !== parseInt(newTask.quadrant)) {
-    ElMessage.error(`坐标 (${newTask.x}, ${newTask.y}) 应该属于第${expectedQuadrant}象限`)
-    return
+    ElMessage.error(
+      `坐标 (${newTask.x}, ${newTask.y}) 应该属于第${expectedQuadrant}象限`
+    );
+    return;
   }
 
-  const targetQuadrant = getQuadrantArray(parseInt(newTask.quadrant))
-  
+  const targetQuadrant = getQuadrantArray(parseInt(newTask.quadrant));
+
   // 检查目标位置是否已有任务
-  const existingTask = getTaskAtPosition(targetQuadrant.value, newTask.x, newTask.y)
+  const existingTask = getTaskAtPosition(
+    targetQuadrant.value,
+    newTask.x,
+    newTask.y
+  );
   if (existingTask) {
-    ElMessage.error(`坐标 (${newTask.x}, ${newTask.y}) 已有任务`)
-    return
+    ElMessage.error(`坐标 (${newTask.x}, ${newTask.y}) 已有任务`);
+    return;
   }
 
   const task = {
@@ -319,163 +384,185 @@ const addTask = () => {
     deadline: newTask.deadline,
     x: newTask.x,
     y: newTask.y,
-    createTime: new Date().toLocaleString()
-  }
+    createTime: new Date().toLocaleString(),
+  };
 
   // 添加到目标象限
-  targetQuadrant.value.push(task)
+  targetQuadrant.value.push(task);
 
   // 重置表单
   Object.assign(newTask, {
-    name: '',
-    quadrant: '',
-    deadline: '',
+    name: "",
+    quadrant: "",
+    deadline: "",
     x: 1,
-    y: 1
-  })
+    y: 1,
+  });
 
-  showAddDialog.value = false
-  ElMessage.success(`任务已添加到坐标 (${task.x}, ${task.y})`)
-  
+  showAddDialog.value = false;
+  ElMessage.success(`任务已添加到坐标 (${task.x}, ${task.y})`);
+
   // 保存到本地存储
-  saveToLocalStorage()
-  
+  saveToLocalStorage();
+
   // 重新设置通知
-  setupNotifications()
-}
+  setupNotifications();
+};
 
 // 根据坐标优先级排序任务
 const sortTasksByPriority = (tasks: Task[]) => {
   tasks.sort((a, b) => {
-    const priorityA = a.x + a.y
-    const priorityB = b.x + b.y
-    return priorityB - priorityA // 降序排列，数值大的在前
-  })
-}
+    const priorityA = a.x + a.y;
+    const priorityB = b.x + b.y;
+    return priorityB - priorityA; // 降序排列，数值大的在前
+  });
+};
 
 // 重新排序所有象限的任务
 const sortAllQuadrants = () => {
-  sortTasksByPriority(quadrant1Items.value)
-  sortTasksByPriority(quadrant2Items.value)
-  sortTasksByPriority(quadrant3Items.value)
-  sortTasksByPriority(quadrant4Items.value)
-}
+  sortTasksByPriority(quadrant1Items.value);
+  sortTasksByPriority(quadrant2Items.value);
+  sortTasksByPriority(quadrant3Items.value);
+  sortTasksByPriority(quadrant4Items.value);
+};
 
 // 删除任务
 const deleteTask = (taskId: number) => {
-  const allQuadrants = [quadrant1Items, quadrant2Items, quadrant3Items, quadrant4Items]
-  
-  allQuadrants.forEach(quadrant => {
-    const index = quadrant.value.findIndex(task => task.id === taskId)
+  const allQuadrants = [
+    quadrant1Items,
+    quadrant2Items,
+    quadrant3Items,
+    quadrant4Items,
+  ];
+
+  allQuadrants.forEach((quadrant) => {
+    const index = quadrant.value.findIndex((task) => task.id === taskId);
     if (index > -1) {
-      quadrant.value.splice(index, 1)
+      quadrant.value.splice(index, 1);
     }
-  })
-  
-  saveToLocalStorage()
-  setupNotifications()
-  ElMessage.success('任务删除成功')
-}
+  });
+
+  saveToLocalStorage();
+  setupNotifications();
+  ElMessage.success("任务删除成功");
+};
 
 // 获取指定位置的任务
 const getTaskAtPosition = (tasks: Task[], x: number, y: number) => {
-  return tasks.find(task => task.x === x && task.y === y)
-}
+  return tasks.find((task) => task.x === x && task.y === y);
+};
 
 // 开始拖拽
 const onDragStart = (event: DragEvent, task: Task) => {
-  draggedTask = task
-  event.dataTransfer!.effectAllowed = 'move'
-}
+  draggedTask = task;
+  event.dataTransfer!.effectAllowed = "move";
+};
 
 // 拖拽悬停
 const onDragOver = (event: DragEvent) => {
-  event.preventDefault()
-  event.dataTransfer!.dropEffect = 'move'
-}
+  event.preventDefault();
+  event.dataTransfer!.dropEffect = "move";
+};
 
 // 拖拽进入
 const onDragEnter = (event: DragEvent) => {
-  event.preventDefault()
-}
+  event.preventDefault();
+};
 
 // 放置到网格
-const onDropToGrid = (event: DragEvent, quadrant: number, x: number, y: number) => {
-  event.preventDefault()
-  
-  if (!draggedTask) return
+const onDropToGrid = (
+  event: DragEvent,
+  quadrant: number,
+  x: number,
+  y: number
+) => {
+  event.preventDefault();
+
+  if (!draggedTask) return;
 
   // 检查目标位置是否已有任务
-  const targetQuadrant = getQuadrantArray(quadrant)
-  const existingTask = getTaskAtPosition(targetQuadrant.value, x, y)
-  
+  const targetQuadrant = getQuadrantArray(quadrant);
+  const existingTask = getTaskAtPosition(targetQuadrant.value, x, y);
+
   if (existingTask && existingTask.id !== draggedTask.id) {
-    ElMessage.error('该位置已有任务')
-    return
+    ElMessage.error("该位置已有任务");
+    return;
   }
 
   // 从原象限移除任务
-  removeTaskFromAllQuadrants(draggedTask.id)
+  removeTaskFromAllQuadrants(draggedTask.id);
 
   // 更新任务坐标
-  draggedTask.x = x
-  draggedTask.y = y
+  draggedTask.x = x;
+  draggedTask.y = y;
 
   // 添加到目标象限
-  targetQuadrant.value.push(draggedTask)
+  targetQuadrant.value.push(draggedTask);
 
   // 保存到本地存储
-  saveToLocalStorage()
-  
-  ElMessage.success(`任务已移动到坐标 (${x}, ${y})`)
-  draggedTask = null
-}
+  saveToLocalStorage();
+
+  ElMessage.success(`任务已移动到坐标 (${x}, ${y})`);
+  draggedTask = null;
+};
 
 // 点击格子添加任务
 const onCellClick = (quadrant: number, x: number, y: number) => {
   // 检查这个位置是否已有任务
-  const targetQuadrant = getQuadrantArray(quadrant)
-  const existingTask = getTaskAtPosition(targetQuadrant.value, x, y)
-  
+  const targetQuadrant = getQuadrantArray(quadrant);
+  const existingTask = getTaskAtPosition(targetQuadrant.value, x, y);
+
   if (existingTask) {
     // 如果已有任务，不执行任何操作
-    return
+    return;
   }
 
   // 自动填入表单
-  newTask.quadrant = quadrant.toString()
-  newTask.x = x
-  newTask.y = y
-  
+  newTask.quadrant = quadrant.toString();
+  newTask.x = x;
+  newTask.y = y;
+
   // 打开添加任务对话框
-  showAddDialog.value = true
-  
-  const quadrantName = ['', '第一象限', '第二象限', '第三象限', '第四象限'][quadrant]
-  ElMessage.info(`点击${quadrantName}坐标 (${x}, ${y})，请填写任务信息`)
-}
+  showAddDialog.value = true;
+
+  const quadrantName = ["", "第一象限", "第二象限", "第三象限", "第四象限"][
+    quadrant
+  ];
+  ElMessage.info(`点击${quadrantName}坐标 (${x}, ${y})，请填写任务信息`);
+};
 
 // 获取象限数组引用
 const getQuadrantArray = (quadrant: number) => {
   switch (quadrant) {
-    case 1: return quadrant1Items
-    case 2: return quadrant2Items
-    case 3: return quadrant3Items
-    case 4: return quadrant4Items
-    default: return quadrant1Items
+    case 1:
+      return quadrant1Items;
+    case 2:
+      return quadrant2Items;
+    case 3:
+      return quadrant3Items;
+    case 4:
+      return quadrant4Items;
+    default:
+      return quadrant1Items;
   }
-}
+};
 
 // 从所有象限移除任务
 const removeTaskFromAllQuadrants = (taskId: number) => {
-  const allQuadrants = [quadrant1Items, quadrant2Items, quadrant3Items, quadrant4Items]
-  
-  allQuadrants.forEach(quadrant => {
-    const index = quadrant.value.findIndex(task => task.id === taskId)
+  const allQuadrants = [
+    quadrant1Items,
+    quadrant2Items,
+    quadrant3Items,
+    quadrant4Items,
+  ];
+
+  allQuadrants.forEach((quadrant) => {
+    const index = quadrant.value.findIndex((task) => task.id === taskId);
     if (index > -1) {
-      quadrant.value.splice(index, 1)
+      quadrant.value.splice(index, 1);
     }
-  })
-}
+  });
+};
 
 // 保存到本地存储
 const saveToLocalStorage = () => {
@@ -483,127 +570,135 @@ const saveToLocalStorage = () => {
     quadrant1: quadrant1Items.value,
     quadrant2: quadrant2Items.value,
     quadrant3: quadrant3Items.value,
-    quadrant4: quadrant4Items.value
-  }
-  localStorage.setItem('timeManagementTasks', JSON.stringify(data))
-}
+    quadrant4: quadrant4Items.value,
+  };
+  localStorage.setItem("timeManagementTasks", JSON.stringify(data));
+};
 
 // 从本地存储加载
 const loadFromLocalStorage = () => {
-  const data = localStorage.getItem('timeManagementTasks')
+  const data = localStorage.getItem("timeManagementTasks");
   if (data) {
-    const parsed = JSON.parse(data)
-    quadrant1Items.value = parsed.quadrant1 || []
-    quadrant2Items.value = parsed.quadrant2 || []
-    quadrant3Items.value = parsed.quadrant3 || []
-    quadrant4Items.value = parsed.quadrant4 || []
+    const parsed = JSON.parse(data);
+    quadrant1Items.value = parsed.quadrant1 || [];
+    quadrant2Items.value = parsed.quadrant2 || [];
+    quadrant3Items.value = parsed.quadrant3 || [];
+    quadrant4Items.value = parsed.quadrant4 || [];
   }
-}
+};
 
 // 设置截止时间通知
 const setupNotifications = () => {
   // 清除之前的定时器
   if (notificationTimer) {
-    clearInterval(notificationTimer)
+    clearInterval(notificationTimer);
   }
 
   // 每分钟检查一次
   notificationTimer = setInterval(() => {
-    checkDeadlines()
-  }, 60000)
+    checkDeadlines();
+  }, 60000);
 
   // 立即检查一次
-  checkDeadlines()
-}
+  checkDeadlines();
+};
 
 // 检查截止时间
 const checkDeadlines = () => {
-  const now = new Date()
+  const now = new Date();
   const allTasks = [
     ...quadrant1Items.value,
     ...quadrant2Items.value,
     ...quadrant3Items.value,
-    ...quadrant4Items.value
-  ]
+    ...quadrant4Items.value,
+  ];
 
-  allTasks.forEach(task => {
+  allTasks.forEach((task) => {
     if (task.deadline) {
-      const deadline = new Date(task.deadline)
-      const timeDiff = deadline.getTime() - now.getTime()
-      const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60))
+      const deadline = new Date(task.deadline);
+      const timeDiff = deadline.getTime() - now.getTime();
+      const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
 
       // 提前1小时提醒
       if (hoursDiff === 1 && !task.notified1h) {
-        showNotification(task, '1小时后到期')
-        task.notified1h = true
+        showNotification(task, "1小时后到期");
+        task.notified1h = true;
       }
-      
+
       // 提前30分钟提醒
-      else if (timeDiff <= 30 * 60 * 1000 && timeDiff > 0 && !task.notified30m) {
-        showNotification(task, '30分钟后到期')
-        task.notified30m = true
+      else if (
+        timeDiff <= 30 * 60 * 1000 &&
+        timeDiff > 0 &&
+        !task.notified30m
+      ) {
+        showNotification(task, "30分钟后到期");
+        task.notified30m = true;
       }
-      
+
       // 到期提醒
       else if (timeDiff <= 0 && !task.notifiedExpired) {
-        showNotification(task, '已到期', 'error')
-        task.notifiedExpired = true
+        showNotification(task, "已到期", "error");
+        task.notifiedExpired = true;
       }
     }
-  })
+  });
 
-  saveToLocalStorage()
-}
+  saveToLocalStorage();
+};
 
 // 显示通知
-const showNotification = (task: Task, message: string, type: 'success' | 'warning' | 'info' | 'error' = 'warning') => {
+const showNotification = (
+  task: Task,
+  message: string,
+  type: "success" | "warning" | "info" | "error" = "warning"
+) => {
   // 浏览器通知
-  if ('Notification' in window && Notification.permission === 'granted') {
+  if ("Notification" in window && Notification.permission === "granted") {
     new Notification(`任务提醒：${task.name}`, {
       body: message,
-      icon: '/favicon.ico'
-    })
+      icon: "/favicon.ico",
+    });
   }
 
   // Element Plus 通知
   ElNotification({
-    title: '任务提醒',
+    title: "任务提醒",
     message: `${task.name} - ${message}`,
     type: type,
-    duration: 0 // 不自动关闭
-  })
-}
+    duration: 0, // 不自动关闭
+  });
+};
 
 // 请求通知权限
 const requestNotificationPermission = () => {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission()
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
   }
-}
+};
 
 // 根据坐标判断象限
 const getQuadrantFromCoordinates = (x: number, y: number) => {
-  if (x > 0 && y > 0) return 1  // 第一象限
-  if (x < 0 && y > 0) return 2  // 第二象限
-  if (x < 0 && y < 0) return 3  // 第三象限
-  if (x > 0 && y < 0) return 4  // 第四象限
-  return 1 // 默认第一象限
-}
+  if (x > 0 && y > 0) return 1; // 第一象限
+  if (x < 0 && y > 0) return 2; // 第二象限
+  if (x < 0 && y < 0) return 3; // 第三象限
+  if (x > 0 && y < 0) return 4; // 第四象限
+  return 1; // 默认第一象限
+};
 
 // 组件挂载时
 onMounted(() => {
-  loadFromLocalStorage()
-  sortAllQuadrants()
-  requestNotificationPermission()
-  setupNotifications()
-})
+  loadFromLocalStorage();
+  sortAllQuadrants();
+  requestNotificationPermission();
+  setupNotifications();
+});
 
 // 组件卸载时清理定时器
 onUnmounted(() => {
   if (notificationTimer) {
-    clearInterval(notificationTimer)
+    clearInterval(notificationTimer);
   }
-})
+});
 </script>
 
 <style scoped>
@@ -627,19 +722,20 @@ onUnmounted(() => {
 
 .header h1 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .quadrants-wrapper {
   flex: 1;
   display: flex;
   position: relative;
-  background: linear-gradient(45deg, 
-    rgba(100, 100, 100, 0.1) 0%,     /* 第三象限：灰色 */
-    rgba(100, 150, 100, 0.1) 25%,    /* 第二象限：绿色 */
-    rgba(150, 150, 100, 0.1) 50%,    /* 过渡 */
-    rgba(200, 100, 100, 0.1) 75%,    /* 第四象限：橙色 */
-    rgba(255, 100, 100, 0.2) 100%    /* 第一象限：红色 */
+  background: linear-gradient(
+    45deg,
+    rgba(100, 100, 100, 0.1) 0%,
+    /* 第三象限：灰色 */ rgba(100, 150, 100, 0.1) 25%,
+    /* 第二象限：绿色 */ rgba(150, 150, 100, 0.1) 50%,
+    /* 过渡 */ rgba(200, 100, 100, 0.1) 75%,
+    /* 第四象限：橙色 */ rgba(255, 100, 100, 0.2) 100% /* 第一象限：红色 */
   );
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -706,9 +802,10 @@ onUnmounted(() => {
   left: 12px;
   right: 12px;
   height: 3px;
-  background: linear-gradient(90deg, 
-    rgba(0, 0, 0, 0.3) 0%, 
-    rgba(0, 0, 0, 0.6) 50%, 
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
     rgba(0, 0, 0, 0.3) 100%
   );
   z-index: 2;
@@ -721,9 +818,10 @@ onUnmounted(() => {
   top: 12px;
   bottom: 12px;
   width: 3px;
-  background: linear-gradient(180deg, 
-    rgba(0, 0, 0, 0.3) 0%, 
-    rgba(0, 0, 0, 0.6) 50%, 
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
     rgba(0, 0, 0, 0.3) 100%
   );
   z-index: 2;
@@ -927,12 +1025,12 @@ onUnmounted(() => {
 }
 
 /* 拖拽状态样式 */
-.grid-cell:hover:empty::before {
-  content: '点击添加';
+/* .grid-cell:hover:empty::before {
+  content: "点击添加";
   color: rgba(0, 0, 0, 0.4);
   font-size: 10px;
   white-space: nowrap;
-}
+} */
 
 .grid-cell:hover {
   cursor: pointer;
@@ -945,20 +1043,18 @@ onUnmounted(() => {
 
 /* 网格坐标提示 */
 .grid-cell:empty:hover::after {
-  content: '(' attr(data-x) ', ' attr(data-y) ')';
+  content: "点击添加";
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  font-size: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
   color: rgba(0, 0, 0, 0.6);
-  background: rgba(255, 255, 255, 0.8);
-  padding: 1px 3px;
-  border-radius: 2px;
 }
 
 /* 添加象限标识 */
 .grid-cell::before {
-  content: attr(data-x) ',' attr(data-y);
+  content: attr(data-x) "," attr(data-y);
   position: absolute;
   top: 1px;
   left: 2px;
@@ -966,4 +1062,4 @@ onUnmounted(() => {
   color: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
-</style> 
+</style>
