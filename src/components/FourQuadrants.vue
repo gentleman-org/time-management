@@ -732,8 +732,8 @@ onUnmounted(() => {
   background: linear-gradient(
     45deg,
     rgba(100, 100, 100, 0.1) 0%,
-    /* 第三象限：灰色 */ rgba(100, 150, 100, 0.1) 25%,
-    /* 第二象限：绿色 */ rgba(150, 150, 100, 0.1) 50%,
+    /* 第三象限：灰色 */ rgba(175, 155, 155, 0.15) 25%,
+    /* 第二象限：绿色 */ rgba(255, 175, 175, 0.1) 50%,
     /* 过渡 */ rgba(200, 100, 100, 0.1) 75%,
     /* 第四象限：橙色 */ rgba(255, 100, 100, 0.2) 100% /* 第一象限：红色 */
   );
@@ -766,18 +766,18 @@ onUnmounted(() => {
 }
 
 .quadrant-2 {
-  background: rgba(100, 150, 100, 0.15);
-  border: 1px solid rgba(100, 150, 100, 0.3);
+  background: rgba(255, 175, 175, 0.15);
+  border: 1px solid rgba(255, 175, 175, 0.3);
 }
 
 .quadrant-3 {
-  background: rgba(100, 100, 100, 0.15);
+  /* background: rgba(100, 100, 100, 0.15); */
   border: 1px solid rgba(100, 100, 100, 0.3);
 }
 
 .quadrant-4 {
-  background: rgba(200, 100, 100, 0.15);
-  border: 1px solid rgba(200, 100, 100, 0.3);
+  background: rgba(255, 175, 175, 0.15);
+  border: 1px solid rgba(255, 175, 175, 0.3);
 }
 
 .quadrant-title {
@@ -787,6 +787,7 @@ onUnmounted(() => {
   margin-bottom: 12px;
   color: #333;
   line-height: 1.3;
+  user-select: none;
 }
 
 .draggable-area {
